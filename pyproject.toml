@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "qwen2-triton-training"
+version = "0.1.0"
+description = "Fine-tune Qwen2.5-7B with LoRA + Triton-fused training kernels"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+
+dependencies = [
+    "torch>=2.3.0",
+    "triton>=2.3.0",
+    "transformers>=4.40.0",
+    "accelerate>=0.30.0",
+    "liger-kernel>=0.3.0",
+    "numpy>=2.4.4",
+    "setuptools>=81.0.0",
+    # data / serialisation
+    "datasets>=2.18.0",
+    "tokenizers>=0.19.0",
+    "safetensors>=0.4.3",
+    # utilities
+    "tqdm>=4.66.0",
+    "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+# uv add --optional quant
+quant = [
+    "bitsandbytes>=0.43.0",   # 4-bit / 8-bit base model loading
+]
+# uv add --optional dev
+dev = [
+    "pytest>=8.0.0",
+    "pytest-benchmark>=4.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["kernels", "model", "train", "benchmarks"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
